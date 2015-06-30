@@ -14,10 +14,9 @@ import javax.swing.JPanel;
 public class Panel extends JPanel implements MouseListener{
     
     private ProcessedImage pimg;
-    private short[] target = new short[]{151, 53, 42};
+    private int[] target = new int[]{151, 53, 42};
     private ArrayList<ShapeRectangle> shapes;
-    byte[][][] vals;
-    byte[][][] resVals;
+    int[] vals;
     
     public Panel(int w, int h){
         super.setPreferredSize(new Dimension(w, h));
@@ -33,7 +32,6 @@ public class Panel extends JPanel implements MouseListener{
         shapes = new ArrayList<ShapeRectangle>();
         
         vals = pimg.getOrganizedData();
-        resVals = pimg.getOrganizedData();
     }
     
     @Override
@@ -42,28 +40,42 @@ public class Panel extends JPanel implements MouseListener{
         
         g.drawImage(pimg.getImage(), 0, 0,pimg.getWidth(), pimg.getHeight(), this);
         
-        g.setColor(new Color(0,255,0,100));
-        for(int r = 0; r < resVals.length; r++){
-            for(int c = 0; c < resVals[0].length; c++){
-                if(Functions.isInTolerance(resVals[r][c], target))
-                   g.fillRect(c*Launcher.resolution, r*Launcher.resolution, Launcher.resolution, Launcher.resolution);
-            }
-        }   
+//        drawResult(g);
         
         for(ShapeRectangle s : shapes)
             s.drawSquare(g);
+    }
+    
+    public void drawResult(Graphics g){
+        int r = 0;
+        int c = 0;
+        while(r < pimg.getHeight()){
+            if(vals[r*pimg.getWidth()+c] != -1){
+                int[] col = Functions.getRGB(vals, r, c, pimg.getWidth());
+                g.setColor(new Color(col[0],col[1],col[2]));
+            }
+            else
+                g.setColor(Color.YELLOW);
+            g.fillRect(c, r, Launcher.resolution, Launcher.resolution);
+            c+=Launcher.resolution;
+            if(c > pimg.getWidth()){
+                c = 0;
+                r+=Launcher.resolution;
+            }
+        }
     }
 
     @Override
     public void mouseClicked(MouseEvent e) {
         if(e.getX() <= pimg.getWidth() && e.getY() <= pimg.getHeight()){
+            long st = System.nanoTime();
             int rgb = pimg.getImage().getRGB(e.getX(), e.getY());
-            target = new short[]{(short)((rgb >> 16) & 0x000000FF),(short)((rgb >> 8) & 0x000000FF),(short)((rgb) & 0x000000FF)};
+            vals = pimg.getOrganizedData();
+            //target = new int[]{(rgb >> 16) & 0x000000ff,(rgb >> 8) & 0x000000ff,(rgb) & 0x000000ff};
+            target = Functions.getRGB(vals, e.getY(), e.getX(), pimg.getWidth());
             //System.out.println(target[0]+","+target[1]+","+target[2]);
             //System.out.println(functions.isInTolerance(new byte[]{(byte)255,(byte)255,(byte)255}, target, tolerance));
-            long st = System.nanoTime();
-            vals = pimg.getOrganizedData();
-            shapes = new EdgeDetectRoutine().runRoutine(vals, target);
+            shapes = new EdgeDetectRoutine().runRoutine(vals, target,pimg.getWidth(),pimg.getHeight());
             repaint();
             long et = System.nanoTime();
             System.out.println((et-st)+"us , "+((et-st)/1000000)+"ms");

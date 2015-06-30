@@ -16,27 +16,13 @@ public class ProcessedImage {
         alpha = image.getAlphaRaster() != null;
     }
     
-    public byte[][][] getOrganizedData(){
+    public int[] getOrganizedData(){
+        int[] ret = new int[width*height];
         byte[] tempPix = getPixelData();
-        int retWidth = width/Launcher.resolution;
-        int retHeight = height/Launcher.resolution;
-        byte[][][] ret = new byte[retHeight][retWidth][3];
-        int widthCutoff = (width%Launcher.resolution)*3;
-        int row = 0;
-        int col = 0;
-        int tempPixInc = 3*Launcher.resolution;
-        int rowInc = (Launcher.resolution-1)*width*3;
-        for(int i = 0; i < tempPix.length; i+=tempPixInc){
-            ret[row][col] = new byte[]{tempPix[i+2],tempPix[i+1],tempPix[i]};
-            col++;
-            if(col >= retWidth){
-                col = 0;
-                row++;
-                i+=widthCutoff;
-                i+=rowInc;
-            }
-            if(row >= retHeight)
-                break;
+        int j = 0;
+        for(int i = 0; i < tempPix.length; i+=3){
+            ret[j] = 0xff000000 + (tempPix[i] << 16) + (tempPix[i+1] << 8) + (tempPix[i+2]);
+            j++;
         }
         return ret;
     }

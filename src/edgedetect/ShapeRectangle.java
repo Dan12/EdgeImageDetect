@@ -23,11 +23,12 @@ public class ShapeRectangle {
     }
     
     public void drawSquare(Graphics g){
-        g.setColor(new Color(rnd.nextInt(200),rnd.nextInt(200),rnd.nextInt(200),100));
-        g.fillRect(minX*Launcher.resolution, minY*Launcher.resolution, (maxX-minX+1)*Launcher.resolution, (maxY-minY+1)*Launcher.resolution);
+        //g.setColor(new Color(rnd.nextInt(200),rnd.nextInt(200),rnd.nextInt(200),100));
+        g.setColor(new Color(0,255,0,100));
+        g.fillRect(minX, minY, (maxX-minX+Launcher.resolution), (maxY-minY+Launcher.resolution));
         g.setFont(new Font("Arial", Font.BOLD, 20));
         g.setColor(Color.BLACK);
-        g.drawString(String.format("%.2f", ((float)density)/getArea()), minX*Launcher.resolution+4, maxY*Launcher.resolution-4);
+        g.drawString(String.format("%.2f", ((float)density)/getArea()), minX+4, maxY-4);
     }
     
     public void newPoint(int[] p){
