@@ -6,7 +6,7 @@ public class Launcher {
     
     public static final int resolution = 1;
     public static final short tolerance = 35;
-    public static final int minShapeDim = 15;
+    public static final int minShapeDim = 20;
     
     public static void main(String[] args) {
         JFrame.setDefaultLookAndFeelDecorated(false);

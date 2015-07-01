@@ -69,10 +69,10 @@ public class Panel extends JPanel implements MouseListener{
     public void mouseClicked(MouseEvent e) {
         if(e.getX() <= pimg.getWidth() && e.getY() <= pimg.getHeight()){
             long st = System.nanoTime();
-            int rgb = pimg.getImage().getRGB(e.getX(), e.getY());
+            //int rgb = pimg.getImage().getRGB(e.getX(), e.getY());
             vals = pimg.getOrganizedData();
             //target = new int[]{(rgb >> 16) & 0x000000ff,(rgb >> 8) & 0x000000ff,(rgb) & 0x000000ff};
-            target = Functions.getRGB(vals, e.getY(), e.getX(), pimg.getWidth());
+            target = Functions.getRGB(vals, e.getY()-1, e.getX()-1, pimg.getWidth());
             //System.out.println(target[0]+","+target[1]+","+target[2]);
             //System.out.println(functions.isInTolerance(new byte[]{(byte)255,(byte)255,(byte)255}, target, tolerance));
             shapes = new EdgeDetectRoutine().runRoutine(vals, target,pimg.getWidth(),pimg.getHeight());
