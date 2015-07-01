@@ -11,7 +11,7 @@ public class ShapeRectangle {
     private int maxX;
     private int maxY;
     private Random rnd;
-    private int density;
+    private float density;
     
     public ShapeRectangle(){
         minX = Integer.MAX_VALUE;
@@ -28,7 +28,8 @@ public class ShapeRectangle {
         g.fillRect(minX, minY, (maxX-minX+Launcher.resolution), (maxY-minY+Launcher.resolution));
         g.setFont(new Font("Arial", Font.BOLD, 20));
         g.setColor(Color.BLACK);
-        g.drawString(String.format("%.2f", ((float)density)/getArea()), minX+4, maxY-4);
+        //g.drawString(String.format("%.2f", ((float)density)/getArea()), minX+4, maxY-4);
+        g.drawString(String.format("%.2f", density), minX+4, maxY-4);
     }
     
     public void newPoint(int[] p){
@@ -66,7 +67,7 @@ public class ShapeRectangle {
             maxY = m;
     }
     
-    public void setDensity(int d){
+    public void setDensity(float d){
         density = d;
     }
     
@@ -84,6 +85,14 @@ public class ShapeRectangle {
     
     public int getMaxY(){
         return maxY;
+    }
+    
+    public int getWidth(){
+        return maxX-minX;
+    }
+    
+    public int getHeight(){
+        return maxY-minY;
     }
     
     public int getCenterX(){

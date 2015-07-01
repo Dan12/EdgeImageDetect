@@ -4,7 +4,7 @@ import javax.swing.JFrame;
 
 public class Launcher {
     
-    public static final int resolution = 4;
+    public static final int resolution = 1;
     public static final short tolerance = 35;
     public static final int minShapeDim = 15;
     

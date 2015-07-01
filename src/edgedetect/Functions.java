@@ -1,7 +1,7 @@
 package edgedetect;
 
 public class Functions {    
-    private static int[][] pointerNum = new int[][]{
+    private static int[][] pointerNums = new int[][]{
             {1*Launcher.resolution,-1*Launcher.resolution},
             {1*Launcher.resolution,0},
             {1*Launcher.resolution,1*Launcher.resolution},
@@ -26,14 +26,17 @@ public class Functions {
         return new int[]{(input) & 0xff, (input >> 8) & 0xff, (input >> 16) & 0xff};
     }
 
-    public static int[] nextPos(int[] vals, int r, int c, int[] targ, int w, int h){
+    public static int[] nextPos(int[] vals, int r, int c, int[] targ, int w, int h, int p){
         boolean seenOpenPixel = false;
         int pointerNum = 0;
         int[] ret = new int[]{r,c};
         for(int i = 0; i < 8; i++){
-            int[] pointer = mapPointerNum(i,0);
-            if(inBounds(vals,r+pointer[1],c+pointer[0], w, h) && vals[(r+pointer[1])*w+(c+pointer[0])] != -1 && !isInTolerance(vals[(r+pointer[1])*w+(c+pointer[0])], targ)){
-                pointerNum = i;
+            int[] pointer = mapPointerNum(i,p);
+            if(inBounds(vals,r+pointer[1],c+pointer[0], w, h) && (vals[(r+pointer[1])*w+(c+pointer[0])] == -1 || !isInTolerance(vals[(r+pointer[1])*w+(c+pointer[0])], targ))){
+                //System.out.println("Opening at "+pointer[0]+","+pointer[1]);
+                pointerNum = i+p+1;
+                if(pointerNum > 7)
+                    pointerNum-=8;
                 seenOpenPixel = true;
                 break;
             }
@@ -41,8 +44,11 @@ public class Functions {
         if(seenOpenPixel){
             for(int i = 0; i < 8; i++){
                 int[] pointer = mapPointerNum(i,pointerNum);
-                if(inBounds(vals,r+pointer[1],c+pointer[0], w, h) && vals[(r+pointer[1])*w+(c+pointer[0])] != -1 && isInTolerance(vals[(r+pointer[1])*w+(c+pointer[0])], targ)){
-                    ret = new int[]{r+pointer[1],c+pointer[0]};
+                if(inBounds(vals,r+pointer[1],c+pointer[0], w, h) && vals[(r+pointer[1])*w+(c+pointer[0])] != -1 && (vals[(r+pointer[1])*w+(c+pointer[0])] == -2 || isInTolerance(vals[(r+pointer[1])*w+(c+pointer[0])], targ))){
+                    //System.out.println("Edge at "+pointer[0]+","+pointer[1]);
+                    ret = new int[]{r+pointer[1],c+pointer[0],i+pointerNum};
+                    if(vals[(r+pointer[1])*w+(c+pointer[0])] == -2)
+                        vals[(r+pointer[1])*w+(c+pointer[0])] = -3;
                     break;
                 }
             }
@@ -59,6 +65,6 @@ public class Functions {
         int test = s+i;
         if(test > 7)
             test -= 8;
-        return pointerNum[test];
+        return pointerNums[test];
     }
 }
